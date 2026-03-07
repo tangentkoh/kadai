@@ -76,13 +76,54 @@ app.post("/register", zValidator("json", registerSchema), async (c) => {
 app.post("/login", zValidator("json", loginSchema), async (c) => {
   // TODO: ログイン処理を実装してください
   // 1. リクエストボディから email, password を取得
-  // 2. メールアドレスでユーザーを検索
-  // 3. bcryptでパスワードを検証
-  // 4. JWTトークンを生成
-  // 5. ユーザー情報とトークンを返す
-  // 注意: 認証失敗時は401エラーを返す
-
-  return c.json({ error: "未実装です" }, 501);
+  try {
+    const { email, password } = c.req.valid("json");
+    // 2. メールアドレスでユーザーを検索
+    const result = await pool.query(
+      "SELECT id, email, password, name, created_at FROM users WHERE email = $1",
+      [email],
+    );
+    if (result.rows.length === 0) {
+      return c.json(
+        { error: "メールアドレスまたはパスワードが間違っています" },
+        401,
+      );
+    }
+    const user = result.rows[0];
+    // 3. bcryptでパスワードを検証
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid) {
+      return c.json(
+        { error: "メールアドレスまたはパスワードが間違っています" },
+        401,
+      );
+    }
+    // 4. JWTトークンを生成
+    const secret =
+      process.env.JWT_SECRET || "your-secret-key-change-this-in-production";
+    const token = await sign(
+      {
+        sub: user.id,
+        email: user.email,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7, // 7 days
+      },
+      secret,
+    );
+    // 5. ユーザー情報とトークンを返す
+    return c.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        created_at: user.created_at,
+      },
+      token,
+    });
+    // 注意: 認証失敗時は401エラーを返す
+  } catch (error) {
+    console.error("Login error:", error);
+    return c.json({ error: "ログインエラーが発生しました" }, 401);
+  }
 });
 
 export default app;
