@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useAuth } from '@/contexts/AuthContext'
-import { API_BASE_URL } from '@/lib/api'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
-  const { login } = useAuth()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { login } = useAuth();
 
   // TODO: 課題1 & 課題3 - ログイン処理を実装してください
   // ヒント:
@@ -25,20 +25,37 @@ export default function LoginPage() {
   // 4. login(data.token)でトークンを保存
   // 5. router.push('/todos')でTodoページにリダイレクト
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
       // ここに実装してください
-      console.log('Login attempt:', email, password)
-      throw new Error('Login not implemented yet')
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to login");
+      }
+
+      // Save token and redirect
+      login(data.token);
+      router.push("/todos");
+      console.log("Login attempt:", email, password);
+      throw new Error("Login not implemented yet");
     } catch (err: any) {
-      setError(err.message || 'Failed to login')
+      setError(err.message || "Failed to login");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -55,7 +72,10 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -70,7 +90,10 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password
             </label>
             <input
@@ -89,17 +112,20 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-600 mt-6">
-          Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-primary-600 hover:text-primary-700 font-semibold">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-primary-600 hover:text-primary-700 font-semibold"
+          >
             Register
           </Link>
         </p>
       </div>
     </main>
-  )
+  );
 }
