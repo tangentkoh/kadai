@@ -4,9 +4,9 @@
 // - ビジネスロジックを持たない
 // - 再利用しやすい設計
 
-'use client'
+"use client";
 
-import { Todo } from '@/types/todo'
+import { Todo } from "@/types/todo";
 
 // TODO: 課題4 - Props型定義を確認してください
 // - todo: 表示するTodoオブジェクト
@@ -14,13 +14,18 @@ import { Todo } from '@/types/todo'
 // - onEdit: 編集ボタンを押した時のコールバック
 // - onDelete: 削除ボタンを押した時のコールバック
 interface TodoItemProps {
-  todo: Todo
-  onToggleComplete: (id: number, completed: boolean) => void
-  onEdit: (todo: Todo) => void
-  onDelete: (id: number) => void
+  todo: Todo;
+  onToggleComplete: (id: number, completed: boolean) => void;
+  onEdit: (todo: Todo) => void;
+  onDelete: (id: number) => void;
 }
 
-export default function TodoItem({ todo, onToggleComplete, onEdit, onDelete }: TodoItemProps) {
+export default function TodoItem({
+  todo,
+  onToggleComplete,
+  onEdit,
+  onDelete,
+}: TodoItemProps) {
   return (
     <div className="bg-white rounded-lg shadow p-4 hover:shadow-md transition duration-200">
       <div className="flex items-start gap-4">
@@ -32,16 +37,22 @@ export default function TodoItem({ todo, onToggleComplete, onEdit, onDelete }: T
         />
 
         <div className="flex-1">
-          <h3 className={`text-lg font-semibold ${todo.completed ? 'line-through text-gray-500' : 'text-gray-800'}`}>
+          <h3
+            className={`text-lg font-semibold ${todo.completed ? "line-through text-gray-500" : "text-gray-800"}`}
+          >
             {todo.title}
           </h3>
           {todo.description && (
-            <p className={`text-sm mt-1 ${todo.completed ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+            <p
+              className={`text-sm mt-1 ${todo.completed ? "line-through text-gray-400" : "text-gray-600"}`}
+            >
               {todo.description}
             </p>
           )}
           <p className="text-xs text-gray-400 mt-2">
-            Created: {new Date(todo.created_at).toLocaleDateString()}
+            <p className="text-xs text-gray-400 mt-2">
+              Created: {new Date(todo.created_at).toLocaleDateString()}
+            </p>
           </p>
         </div>
 
@@ -61,5 +72,5 @@ export default function TodoItem({ todo, onToggleComplete, onEdit, onDelete }: T
         </div>
       </div>
     </div>
-  )
+  );
 }
