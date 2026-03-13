@@ -1,23 +1,29 @@
-'use client'
+"use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { User } from '@/types/user'
-import { API_BASE_URL } from '@/lib/api'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User } from "@/types/user";
+import { API_BASE_URL } from "@/lib/api";
 
 interface AuthContextType {
-  user: User | null
-  token: string | null
-  login: (token: string) => void
-  logout: () => void
-  isLoading: boolean
+  user: User | null;
+  token: string | null;
+  login: (token: string) => void;
+  logout: () => void;
+  isLoading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // TODO: 課題3 - アプリ起動時にトークンを検証する
   // ヒント:
@@ -27,8 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 4. 最後に setIsLoading(false)
   useEffect(() => {
     // ここに実装してください
-    setIsLoading(false)
-  }, [])
+    setIsLoading(false);
+  }, []);
 
   // TODO: 課題3 - login関数を実装してください
   // ヒント:
@@ -38,8 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 4. setUser(userData)
   const login = async (token: string) => {
     // ここに実装してください
-    console.log('login not implemented')
-  }
+    console.log("login not implemented");
+  };
 
   // TODO: 課題3 - logout関数を実装してください
   // ヒント:
@@ -48,20 +54,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 3. setToken(null)
   const logout = () => {
     // ここに実装してください
-    console.log('logout not implemented')
-  }
+    console.log("logout not implemented");
+  };
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
+  return context;
 }
